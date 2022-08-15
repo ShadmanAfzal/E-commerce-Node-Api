@@ -11,6 +11,9 @@
     "migrate": "npm run build && node dist/db/migrate.js",
     "start": "nodemon -e ts --watch src .env --exec \"tsc --incremental && node dist/index.js\""
   },
+  "engines": {
+    "node": "17.x"
+  },
   "author": "Shadman",
   "license": "ISC",
   "dependencies": {
