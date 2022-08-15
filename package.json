@@ -9,7 +9,7 @@
     "build": "tsc",
     "prestart": "npm run build",
     "migrate": "npm run build && node dist/db/migrate.js",
-    "start": "nodemon -e ts --watch src .env --exec \"tsc --incremental && node dist/index.js\""
+    "start": "node dist/index.js"
   },
   "engines": {
     "node": "17.x"
