@@ -5,9 +5,6 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
-    "build": "tsc",
-    "prestart": "npm run build",
     "migrate": "npm run build && node dist/db/migrate.js",
     "start": "node dist/index.js"
   },
