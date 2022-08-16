@@ -1,5 +1,5 @@
 import express from "express";
-import { userAuthentication } from "../middlewares/userAuthentication.js";
+import { userAuthentication } from "../middlewares/userAccessHandler.js";
 import { getMyProducts, addProducts, getProducts, getProductsById, deleteProductsById, updateProducts, searchProductViaTag } from "../controllers/productController.js";
 import authenticationValidator from "../middlewares/authentication.js";
 

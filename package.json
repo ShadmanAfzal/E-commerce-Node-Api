@@ -5,11 +5,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "migrate": "npm run build && node dist/db/migrate.js",
     "start": "node ./dist/index.js"
-  },
-  "engines": {
-    "node": "17.x"
   },
   "author": "Shadman",
   "license": "ISC",

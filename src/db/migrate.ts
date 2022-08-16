@@ -1,5 +1,5 @@
 import { exit } from "process";
-import pool from "../services/queries";
+import { client } from "..";
 
 const create_table_products_query = `CREATE TABLE IF NOT EXISTS products(
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
@@ -33,9 +33,9 @@ const create_table_seller_query = `CREATE TABLE IF NOT EXISTS seller_details(
 );`
 
 const migrate = async () => {
-    await pool.query(create_table_products_query);
-    await pool.query(create_table_users_query);
-    await pool.query(create_table_seller_query);
+    await client.query(create_table_products_query);
+    await client.query(create_table_users_query);
+    await client.query(create_table_seller_query);
     console.log("Migration done successfully");
     exit();
 }

@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const process_1 = require("process");
-const queries_1 = __importDefault(require("../services/queries"));
+const __1 = require("..");
 const create_table_products_query = `CREATE TABLE IF NOT EXISTS products(
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     title TEXT NOT NULL,
@@ -34,9 +31,9 @@ const create_table_seller_query = `CREATE TABLE IF NOT EXISTS seller_details(
     aadhaar_number TEXT NOT NULL CHECK(length(aadhaar_number) = 12)
 );`;
 const migrate = async () => {
-    await queries_1.default.query(create_table_products_query);
-    await queries_1.default.query(create_table_users_query);
-    await queries_1.default.query(create_table_seller_query);
+    await __1.client.query(create_table_products_query);
+    await __1.client.query(create_table_users_query);
+    await __1.client.query(create_table_seller_query);
     console.log("Migration done successfully");
     (0, process_1.exit)();
 };

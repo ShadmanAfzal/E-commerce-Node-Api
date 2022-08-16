@@ -1,9 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addDetailsController = void 0;
 const sellerValidator_1 = require("../utils/sellerValidator");
 const sellerServices_1 = require("../services/sellerServices");
-const addDetailsController = async (req, res) => {
+const error_1 = __importDefault(require("../utils/error"));
+const addDetailsController = async (req, res, next) => {
     try {
         const validatorResult = sellerValidator_1.sellerScheme.validate(req.body);
         if (validatorResult.error) {
@@ -12,7 +16,7 @@ const addDetailsController = async (req, res) => {
         return res.json(await (0, sellerServices_1.addDetails)(req.user, req.body));
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        return next(new error_1.default(500, error.message));
     }
 };
 exports.addDetailsController = addDetailsController;

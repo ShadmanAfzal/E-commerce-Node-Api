@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { sellerScheme } from "../utils/sellerValidator";
 import { addDetails } from "../services/sellerServices";
+import ErrorHandler from "../utils/error";
 
-export const addDetailsController = async (req: Request, res: Response) => {
+export const addDetailsController = async (req: Request, res: Response,next:NextFunction) => {
     try {
 
         const validatorResult = sellerScheme.validate(req.body);
@@ -14,6 +15,6 @@ export const addDetailsController = async (req: Request, res: Response) => {
         return res.json(await addDetails(req.user,req.body));
 
     } catch (error) {
-        res.status(500).json({success: false, message: error.message})
+        return next(new ErrorHandler(500,error.message));
     }
 }

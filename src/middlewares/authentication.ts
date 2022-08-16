@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import jsonwebtoken from "jsonwebtoken";
-import pool from "../services/queries";
 import User from "../model/user";
 
 function authenticationValidator(req: Request, res: Response, next: NextFunction) {
