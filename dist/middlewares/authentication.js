@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const userServices_1 = require("../services/userServices");
 function authenticationValidator(req, res, next) {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
@@ -15,7 +16,10 @@ function authenticationValidator(req, res, next) {
         if (err) {
             return res.status(403).json({ 'success': false, 'message': 'forbidden' });
         }
-        req.user = user;
+        console.log(user);
+        const response = await (0, userServices_1.userDetails)(user.id);
+        console.log(response);
+        req.user = response.data.user;
         next();
     });
 }

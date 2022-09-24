@@ -24,6 +24,10 @@ export const productScheme = Joi.object({
         "*": "Please provide valid url",
     }),
     tag: Joi.array().items(Joi.string()),
+    price: Joi.number().required().messages({
+        'any.required': 'Price is missing',
+        '*.base': 'Price should be an integer',
+    })
 });
 
 export const productUpdateScheme = Joi.object({

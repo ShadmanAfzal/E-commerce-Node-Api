@@ -10,7 +10,7 @@ export async function addProduct(product: Product, user: User) {
         product.tag = []
     }
 
-    const query = `INSERT INTO products (title,short_desc,description,photo_url, tag, seller_id) VALUES('${product.title}', '${product.short_desc}', '${product.description}', '${product.image_url}', '{${product.tag.join(',')}}', '${user.id}');`;
+    const query = `INSERT INTO products (title,short_desc,description,photo_url, tag, seller_id,price) VALUES('${product.title}', '${product.short_desc}', '${product.description}', '${product.image_url}', '{${product.tag.join(',')}}', '${user.id}', ${product.price});`;
 
     const result = await client.query(query);
 
@@ -113,6 +113,10 @@ export const updateProduct = async (productInfo: Product, seller_id: string) => 
 
     if (productInfo.tag) {
         product.tag = productInfo.tag;
+    }
+
+    if(productInfo.price){
+        product.price = productInfo.price;
     }
 
     const updateQuery = `UPDATE products set title='${product.title}', short_desc='${product.short_desc}', description='${product.description}', photo_url='${product.photo_url}', tag='{${product.tag.join(',')}}' where id='${product_id}'`;

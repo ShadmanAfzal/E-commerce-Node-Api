@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jsonwebtoken from "jsonwebtoken";
+import { userDetails } from "../services/userServices";
 import User from "../model/user";
 
 function authenticationValidator(req: Request, res: Response, next: NextFunction) {
@@ -13,13 +14,20 @@ function authenticationValidator(req: Request, res: Response, next: NextFunction
         return;
     }
 
-    jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, user:User) => {
+    jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, user: any) => {
 
         if (err) {
             return res.status(403).json({ 'success': false, 'message': 'forbidden' });
         }
 
-        req.user = user;
+        console.log(user)
+
+        const response = await userDetails(user.id);
+
+        console.log(response);
+
+        req.user = response.data.user;
+
         next();
     });
 }

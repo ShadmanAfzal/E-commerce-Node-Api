@@ -6,6 +6,7 @@ import UserType from '../enum/userType';
 import Seller from '../model/seller';
 import { client } from '..';
 import ErrorHandler from '../utils/error';
+import sharp from 'sharp';
 
 export async function createUser(user: User) {
 
@@ -17,15 +18,13 @@ export async function createUser(user: User) {
         throw new ErrorHandler(401, 'User Already Exists');
     }
 
-    if (!user.userProfile) {
-        user.userProfile = 'https://www.gravatar.com/avatar/';
-    }
-
     if (!user.role) {
         user.role = UserType.user;
     }
 
-    const query = `insert into users (first_name, last_name, email_id, password, role, user_profile, phone) values('${user.firstname}','${user.lastname}','${user.email}','${encryptedPassword}', '${user.role}', '${user.userProfile}', '${user.phone}');`;
+    const query = `insert into users (first_name, last_name, email_id, password, role, phone) values('${user.firstname}','${user.lastname}','${user.email}','${encryptedPassword}', '${user.role}', '${user.phone}');`;
+
+    console.log(query);
 
     const result = await client.query(query);
 
@@ -50,11 +49,7 @@ export async function login(user: User) {
 
     if (bcrypt.compareSync(user.password, password)) {
 
-        const fetchedUser = result.rows[0];
-
-        delete fetchedUser.password;
-
-        const accessToken = jsonwebtoken.sign(fetchedUser, process.env.ACCESS_TOKEN_SECRET);
+        const accessToken = jsonwebtoken.sign({ "id": result.rows[0].id }, process.env.ACCESS_TOKEN_SECRET);
 
         return { 'success': true, token: accessToken };
     }
@@ -117,4 +112,29 @@ export async function updateUserDetails(id: string, details: User) {
     await client.query(`update users set first_name = '${updatedDetails.first_name}', last_name = '${updatedDetails.last_name}', user_profile = '${updatedDetails.user_profile}', phone= '${updatedDetails.phone}' where id='${id}';`)
 
     return { 'success': true, 'message': 'user details updated successfully' };
+}
+
+export const upload = async (avatarData: Buffer, id: string) => {
+
+    const buffer = await sharp(avatarData).resize(250, 250).png().toBuffer()
+
+    const insertQuery = `update users set avatar='${buffer.toString('base64')}' where id='${id}';`
+
+    await client.query(insertQuery);
+
+    return { success: true, message: 'avatar uploaded successfully' }
+}
+
+export const getAvatarData = async (id: string) => {
+
+    if (!id) {
+        throw new ErrorHandler(404, "User not found");
+    }
+
+    const insertQuery = `select avatar from users where id='${id}';`
+
+    const result = await client.query(insertQuery);
+
+    return result.rows[0].avatar;
+
 }

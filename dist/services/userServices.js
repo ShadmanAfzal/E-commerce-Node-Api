@@ -3,25 +3,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserDetails = exports.userDetails = exports.login = exports.createUser = void 0;
+exports.getAvatarData = exports.upload = exports.updateUserDetails = exports.userDetails = exports.login = exports.createUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userType_1 = __importDefault(require("../enum/userType"));
 const __1 = require("..");
 const error_1 = __importDefault(require("../utils/error"));
+const sharp_1 = __importDefault(require("sharp"));
 async function createUser(user) {
     const encryptedPassword = await bcrypt_1.default.hash(user.password, 10);
     const isRegistered = (await __1.client.query(`select * from users where email_id='${user.email}';`)).rowCount === 1;
     if (isRegistered) {
         throw new error_1.default(401, 'User Already Exists');
     }
-    if (!user.userProfile) {
-        user.userProfile = 'https://www.gravatar.com/avatar/';
-    }
     if (!user.role) {
         user.role = userType_1.default.user;
     }
-    const query = `insert into users (first_name, last_name, email_id, password, role, user_profile, phone) values('${user.firstname}','${user.lastname}','${user.email}','${encryptedPassword}', '${user.role}', '${user.userProfile}', '${user.phone}');`;
+    const query = `insert into users (first_name, last_name, email_id, password, role, phone) values('${user.firstname}','${user.lastname}','${user.email}','${encryptedPassword}', '${user.role}', '${user.phone}');`;
+    console.log(query);
     const result = await __1.client.query(query);
     if (result.rowCount >= 1) {
         return { 'success': true, 'message': 'user created successfully' };
@@ -37,9 +36,7 @@ async function login(user) {
     }
     const password = result.rows[0].password;
     if (bcrypt_1.default.compareSync(user.password, password)) {
-        const fetchedUser = result.rows[0];
-        delete fetchedUser.password;
-        const accessToken = jsonwebtoken_1.default.sign(fetchedUser, process.env.ACCESS_TOKEN_SECRET);
+        const accessToken = jsonwebtoken_1.default.sign({ "id": result.rows[0].id }, process.env.ACCESS_TOKEN_SECRET);
         return { 'success': true, token: accessToken };
     }
     throw new error_1.default(401, 'Incorrect credentials');
@@ -85,4 +82,20 @@ async function updateUserDetails(id, details) {
     return { 'success': true, 'message': 'user details updated successfully' };
 }
 exports.updateUserDetails = updateUserDetails;
+const upload = async (avatarData, id) => {
+    const buffer = await (0, sharp_1.default)(avatarData).resize(250, 250).png().toBuffer();
+    const insertQuery = `update users set avatar='${buffer.toString('base64')}' where id='${id}';`;
+    await __1.client.query(insertQuery);
+    return { success: true, message: 'avatar uploaded successfully' };
+};
+exports.upload = upload;
+const getAvatarData = async (id) => {
+    if (!id) {
+        throw new error_1.default(404, "User not found");
+    }
+    const insertQuery = `select avatar from users where id='${id}';`;
+    const result = await __1.client.query(insertQuery);
+    return result.rows[0].avatar;
+};
+exports.getAvatarData = getAvatarData;
 //# sourceMappingURL=userServices.js.map

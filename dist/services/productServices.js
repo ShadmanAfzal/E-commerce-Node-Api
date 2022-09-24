@@ -10,7 +10,7 @@ async function addProduct(product, user) {
     if (!product.tag) {
         product.tag = [];
     }
-    const query = `INSERT INTO products (title,short_desc,description,photo_url, tag, seller_id) VALUES('${product.title}', '${product.short_desc}', '${product.description}', '${product.image_url}', '{${product.tag.join(',')}}', '${user.id}');`;
+    const query = `INSERT INTO products (title,short_desc,description,photo_url, tag, seller_id,price) VALUES('${product.title}', '${product.short_desc}', '${product.description}', '${product.image_url}', '{${product.tag.join(',')}}', '${user.id}', ${product.price});`;
     const result = await index_js_1.client.query(query);
     if (result.rowCount >= 1) {
         return { 'success': true, 'message': 'product added successfully' };
@@ -83,6 +83,9 @@ const updateProduct = async (productInfo, seller_id) => {
     }
     if (productInfo.tag) {
         product.tag = productInfo.tag;
+    }
+    if (productInfo.price) {
+        product.price = productInfo.price;
     }
     const updateQuery = `UPDATE products set title='${product.title}', short_desc='${product.short_desc}', description='${product.description}', photo_url='${product.photo_url}', tag='{${product.tag.join(',')}}' where id='${product_id}'`;
     await index_js_1.client.query(updateQuery);

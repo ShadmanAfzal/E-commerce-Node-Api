@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateDetails = exports.myDetails = exports.loginUser = exports.registerUser = void 0;
+exports.getAvatar = exports.uploadAvatar = exports.updateDetails = exports.myDetails = exports.loginUser = exports.registerUser = void 0;
 const userServices_js_1 = require("../services/userServices.js");
 const loginValidator_js_1 = __importDefault(require("../utils/loginValidator.js"));
 const userValidator_js_1 = require("../utils/userValidator.js");
@@ -60,4 +60,24 @@ async function updateDetails(req, res, next) {
     }
 }
 exports.updateDetails = updateDetails;
+async function uploadAvatar(req, res, next) {
+    try {
+        return res.json(await (0, userServices_js_1.upload)(req.file.buffer, req.user.id));
+    }
+    catch (error) {
+        return next(new error_js_1.default(error.statusCode, error.message));
+    }
+}
+exports.uploadAvatar = uploadAvatar;
+const getAvatar = async (req, res, next) => {
+    try {
+        const avatar = await (0, userServices_js_1.getAvatarData)(req.params.id);
+        res.setHeader('content-type', 'image/png');
+        res.send(Buffer.from(avatar, 'base64'));
+    }
+    catch (error) {
+        return next(new error_js_1.default(error.statusCode, error.message));
+    }
+};
+exports.getAvatar = getAvatar;
 //# sourceMappingURL=userController.js.map

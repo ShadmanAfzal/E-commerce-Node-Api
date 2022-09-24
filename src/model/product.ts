@@ -6,6 +6,7 @@ class Product {
     image_url: string;
     tag: string[];
     seller_id: string;
+    price: number;
 }
 
 export default Product;

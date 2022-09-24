@@ -9,6 +9,7 @@ class User {
     role: UserType;
     userProfile: string;
     phone: number;
+    avatar: string;
 }
 
 export default User;

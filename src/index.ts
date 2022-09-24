@@ -21,7 +21,6 @@ export const client = new pg.Client({
 
 client.connect();
 
-
 app.use('/api/v1/product', productsRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/seller', sellerRouter);

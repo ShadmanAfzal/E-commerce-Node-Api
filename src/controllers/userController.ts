@@ -1,8 +1,9 @@
-import { createUser, login, updateUserDetails, userDetails } from "../services/userServices.js";
-import { NextFunction, Request, Response } from "express";
+import { createUser, getAvatarData, login, updateUserDetails, upload, userDetails } from "../services/userServices.js";
+import { NextFunction, Request, response, Response } from "express";
 import loginScheme from "../utils/loginValidator.js";
 import { userScheme, updateUserScheme } from "../utils/userValidator.js";
 import ErrorHandler from "../utils/error.js";
+import { request } from "http";
 
 export async function registerUser(req: Request, res: Response, next: NextFunction) {
     try {
@@ -64,4 +65,25 @@ export async function updateDetails(req: Request, res: Response, next: NextFunct
     } catch (error) {
         return next(new ErrorHandler(error.statusCode, error.message));
     }
+}
+
+export async function uploadAvatar(req: Request, res: Response, next: NextFunction) {
+    try {
+        return res.json(await upload(req.file.buffer, req.user.id));
+    } catch (error) {
+        return next(new ErrorHandler(error.statusCode, error.message));
+    }
+}
+
+export const getAvatar = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const avatar: string = await getAvatarData(req.params.id);
+        res.setHeader('content-type', 'image/png');
+        res.send(Buffer.from(avatar, 'base64'));
+
+    } catch (error) {
+        return next(new ErrorHandler(error.statusCode, error.message));
+    }
+
 }

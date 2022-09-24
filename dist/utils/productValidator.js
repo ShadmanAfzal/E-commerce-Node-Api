@@ -29,6 +29,10 @@ exports.productScheme = joi_1.default.object({
         "*": "Please provide valid url",
     }),
     tag: joi_1.default.array().items(joi_1.default.string()),
+    price: joi_1.default.number().required().messages({
+        'any.required': 'Price is missing',
+        '*.base': 'Price should be an integer',
+    })
 });
 exports.productUpdateScheme = joi_1.default.object({
     id: joi_1.default.string().required().messages({
